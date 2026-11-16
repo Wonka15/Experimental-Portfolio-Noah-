@@ -4,7 +4,7 @@ An experimental, single-page portfolio built around a 3D Macintosh SE scene, wit
 
 ## What is included
 
-- Interactive Three.js Macintosh SE scene with orbit controls and a floppy-disk boot interaction.
+- Interactive Three.js Macintosh SE scene with orbit controls and a floppy-disk boot interaction, plus a built-in CSS 3D-style orbitable fallback that remains visible when WebGL or external modules fail.
 - Plain HTML Work, About and Contact sections that remain available if WebGL or the 3D module fails.
 - A visible **Skip to work** link so visitors can reach projects without the intro.
 - Project case studies with problem, process and result summaries.
@@ -13,7 +13,7 @@ An experimental, single-page portfolio built around a 3D Macintosh SE scene, wit
 
 ## Run locally
 
-Open `index.html` in a modern browser. The 3D scene imports Three.js and OrbitControls from jsDelivr, so an internet connection is required for the 3D experience. The text portfolio itself is plain HTML and CSS and remains available if the CDN or WebGL is unavailable.
+Open `index.html` in a modern browser. The full WebGL scene loads Three.js and OrbitControls from jsDelivr with an unpkg fallback, so an internet connection is required for that renderer. The built-in CSS 3D-style studio remains visible and orbitable without those downloads. The text portfolio itself is plain HTML and CSS and remains available if the CDN or WebGL is unavailable.
 
 ## Publish with GitHub Pages
 
