@@ -37,13 +37,20 @@ setTimeout(()=>{const loader=document.querySelector('#loader');if(loader){loader
 </script>
 <script type="module">
 async function startScene(){try{
-const THREE=await import('https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js');
-const {OrbitControls}=await import('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js');
+let THREE,OrbitControls,lastImportError;
+for(const base of ['https://cdn.jsdelivr.net/npm/three@0.160.0','https://unpkg.com/three@0.160.0']){
+ try{
+  THREE=await import(base+'/build/three.module.js');
+  ({OrbitControls}=await import(base+'/examples/jsm/controls/OrbitControls.js'));
+  break;
+ }catch(e){lastImportError=e;THREE=null;OrbitControls=null;}
+}
+if(!THREE||!OrbitControls)throw new Error('Could not load Three.js from either CDN. '+(lastImportError?.message||''));
 const stage=document.querySelector('#stage'),toast=document.querySelector('#toast'),scene=new THREE.Scene();scene.background=new THREE.Color('#17100d');scene.fog=new THREE.Fog('#17100d',11,25);
 const camera=new THREE.PerspectiveCamera(38,innerWidth/innerHeight,.1,100);camera.position.set(0,4.6,11);
-const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;stage.appendChild(renderer.domElement);
+const renderer=new THREE.WebGLRenderer({antialias:false,alpha:false,powerPreference:'default'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=false;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.NoToneMapping;stage.appendChild(renderer.domElement);
 const orbit=new OrbitControls(camera,renderer.domElement);orbit.target.set(0,1.35,0);orbit.enableDamping=true;orbit.minDistance=6;orbit.maxDistance=15;orbit.maxPolarAngle=1.48;orbit.minPolarAngle=.65;orbit.enablePan=false;
-scene.add(new THREE.HemisphereLight('#f7dcb6','#392016',2));const keyLight=new THREE.PointLight('#ffb86b',105,13);keyLight.position.set(-3,4,2);keyLight.castShadow=true;scene.add(keyLight);const blueLight=new THREE.PointLight('#8bb9ff',12,4);blueLight.position.set(0,2.4,1);scene.add(blueLight);
+scene.add(new THREE.HemisphereLight('#fff0d8','#392016',2.2));const keyLight=new THREE.PointLight('#ffb86b',75,18);keyLight.position.set(-3,4,2);keyLight.castShadow=true;scene.add(keyLight);const blueLight=new THREE.PointLight('#8bb9ff',12,4);blueLight.position.set(0,2.4,1);scene.add(blueLight);
 const mat=(c,r=.7,m=0)=>new THREE.MeshStandardMaterial({color:c,roughness:r,metalness:m});
 function box(n,w,h,d,x,y,z,m){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.name=n;o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;scene.add(o);return o}
 const wood=mat('#74452b'),darkwood=mat('#3b2117'),beige=mat('#c8bda2'),ivory=mat('#ddd1b7'),black=mat('#171716'),metal=mat('#858071',.35,.6);
